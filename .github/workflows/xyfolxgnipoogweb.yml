@@ -7,7 +7,7 @@ on:
 env:
   AZURE_WEBAPP_NAME: xyfolxgnipoogweb
   AZURE_WEBAPP_PACKAGE_PATH: ./publish
-  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.AZURE_CREDENTIALS }}
+  AZURE_WEBAPP_PUBLISH_PROFILE: ${{ secrets.xyfolxgnipoogweb_7074 }}
   CONFIGURATION: Release
   DOTNET_CORE_VERSION: 6.0.x
   WORKING_DIRECTORY: ./DemoVisualStudioCICDForBlazorServer
