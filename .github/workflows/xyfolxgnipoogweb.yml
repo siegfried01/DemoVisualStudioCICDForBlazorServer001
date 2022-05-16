@@ -1,4 +1,5 @@
 name: Build and deploy .NET Core app to Linux WebApp xyfolxgnipoogweb
+
 on:
   push:
     branches:
@@ -12,7 +13,9 @@ env:
   WORKING_DIRECTORY: ./DemoVisualStudioCICDForBlazorServer
 jobs:
   build-and-deploy:
+
     runs-on: ubuntu-latest
+
     steps:
     - uses: actions/checkout@v2
     - name: Setup .NET Core
