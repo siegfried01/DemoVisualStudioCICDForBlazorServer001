@@ -33,6 +33,7 @@ jobs:
       name: Build Docker container image
       with:
         context: ./DemoVisualStudioCICDForBlazorServer
+        repository: demovisualstudiocicdforblazorserver
         push: true
         tags: |
           user/blazorserver:${{ github.run_number }}
