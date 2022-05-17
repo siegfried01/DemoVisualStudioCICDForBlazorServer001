@@ -33,14 +33,13 @@ jobs:
       name: Build Docker container image
       with:
         context: ./DemoVisualStudioCICDForBlazorServer
-        repository: demovisualstudiocicdforblazorserver
         push: false
         tags: |
           user/blazorserver:${{ github.run_number }}
           user/blazorserver:latest
     - name: push to docker hub
       run: 
-            docker push {{ secrets.DOCKERHUB_USERNAME }}/demovisualstudiocicdforblazorserver
+            docker push ${{ secrets.DOCKERHUB_USERNAME }}/demovisualstudiocicdforblazorserver
     - uses: azure/login@v1
       with:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
