@@ -16,10 +16,13 @@ jobs:
     name: Build and push Docker container image
     runs-on: ubuntu-latest
     steps:
-    - name: Where are we
-      run: ls -al
     - uses: actions/checkout@v3
       name: Checkout code
+    - name: Where are we
+      run: 
+        echo "We are in $(pwd)"
+        ls -al
+        echo "ls-al done"
     - uses: docker/build-push-action@v2    
       name: Build Docker container image
       with:
