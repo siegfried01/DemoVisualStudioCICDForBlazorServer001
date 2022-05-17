@@ -16,6 +16,8 @@ jobs:
     name: Build and push Docker container image
     runs-on: ubuntu-latest
     steps:
+    - name: Where are we
+      run: ls -al
     - uses: actions/checkout@v3
       name: Checkout code
     - uses: docker/build-push-action@v2    
@@ -33,8 +35,6 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: ${{ env.DOTNET_CORE_VERSION }}
-    - name: Where are we
-      run: echo "Hello from $PWD"
     - name: Restore
       run: dotnet restore "${{ env.WORKING_DIRECTORY }}"
     - name: Build
