@@ -27,7 +27,7 @@ jobs:
     - uses: docker/build-push-action@v2    
       name: Build Docker container image
       with:
-        context: .
+        context: ./DemoVisualStudioCICDForBlazorServer
         push: false
     - uses: azure/login@v1
       with:
