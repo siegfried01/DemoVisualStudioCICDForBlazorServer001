@@ -13,10 +13,12 @@ Welcome to your new app deployed from Github Workflow Actions.
 <button @onclick="makeStdOutLogEntry">
     Press me to make a log entry
 </button>
-
+count = @count
 @code{
+    int count = 0;
     async Task makeStdOutLogEntry()
     { // https://www.c-sharpcorner.com/article/introduction-to-logging-framework-in-blazor-with-net-core/
+        count++;
         Console.WriteLine("Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));
         logger.LogDebug("Logger: Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));  
     }
