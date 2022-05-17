@@ -20,9 +20,10 @@ jobs:
       name: Checkout code
     - name: Where are we
       run: 
-        echo "We are in $(pwd)"
+        echo "We are in $PWD"
+    - name: List files
+      run: 
         ls -al
-        echo "ls-al done"
     - uses: docker/build-push-action@v2    
       name: Build Docker container image
       with:
