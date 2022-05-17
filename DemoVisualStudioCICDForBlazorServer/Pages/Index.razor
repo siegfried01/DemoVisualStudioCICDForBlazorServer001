@@ -1,4 +1,7 @@
 ﻿@page "/"
+@using static System.Console
+@using Microsoft.Extensions.Logging;  
+@inject ILogger<Index> logger  
 
 <PageTitle>Index</PageTitle>
 
@@ -7,3 +10,15 @@
 Welcome to your new app deployed from Github Workflow Actions.
 
 <SurveyPrompt Title="How is Blazor working for you?" />
+<button @onclick="makeStdOutLogEntry">
+    Press me to make a log entry
+</button>
+
+@code{
+    async Task makeStdOutLogEntry()
+    { // https://www.c-sharpcorner.com/article/introduction-to-logging-framework-in-blazor-with-net-core/
+        Console.WriteLine("Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));
+        logger.LogDebug("Logger: Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));  
+    }
+
+}
