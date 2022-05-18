@@ -32,7 +32,7 @@ jobs:
       with:
         context: ./DemoVisualStudioCICDForBlazorServer
         push: false
-        tags: siegtfried01/demovisualstudiocicdforblazorserver:latest
+        tags: demovisualstudiocicdforblazorserver:latest
     - name: Docker Push
       run: docker push siegtfried01/demovisualstudiocicdforblazorserver:latest
     - uses: azure/login@v1
