@@ -50,6 +50,14 @@ jobs:
       run: dotnet build "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-restore
     - name: Test
       run: dotnet test "${{ env.WORKING_DIRECTORY }}" --no-build
+    - name: Azure CLI script
+      uses: azure/CLI@v1
+      with:
+        context: ./DemoVisualStudioCICDForBlazorServer
+        azcliversion: 2.30.0
+        inlineScript: |
+          az account show
+          az.cmd deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
     - name: Publish
       run: dotnet publish "${{ env.WORKING_DIRECTORY }}" --configuration ${{ env.CONFIGURATION }} --no-build --output "${{ env.AZURE_WEBAPP_PACKAGE_PATH }}"
     - name: Deploy to Azure WebApp
@@ -63,11 +71,3 @@ jobs:
       with:
         name: webapp
         path: ${{ env.AZURE_WEBAPP_PACKAGE_PATH }}
-    - name: Azure CLI script
-      uses: azure/CLI@v1
-      with:
-        context: ./DemoVisualStudioCICDForBlazorServer
-        azcliversion: 2.30.0
-        inlineScript: |
-          az account show
-          az.cmd deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
