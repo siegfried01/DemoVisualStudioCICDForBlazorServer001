@@ -8,8 +8,8 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
-builder.Logging.AddConfiguration(
-    builder.Configuration.GetSection("Logging"));
+//builder.Services.AddLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug));
+//builder.Logging.ClearProviders().AddConsole();
 
 var app = builder.Build();
 

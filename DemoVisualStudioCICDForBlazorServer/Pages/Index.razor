@@ -21,8 +21,12 @@ count = @count
     async Task makeStdOutLogEntry()
     { // https://www.c-sharpcorner.com/article/introduction-to-logging-framework-in-blazor-with-net-core/
         count++;
-        Console.WriteLine("Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));
-        logger.LogDebug("Logger: Button press " + DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)"));  
+        var now = DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)");
+        Console.WriteLine("Button press " + now);
+        logger.LogDebug("Debug Logger: Button press " + now);  
+        logger.LogInformation("Info Logger: Button press " + now);
+        logger.LogTrace("Trace Logger: Button press " + now);
+        logger.LogWarning("Warning Logger: Button press " + now);
     }
 
 }
