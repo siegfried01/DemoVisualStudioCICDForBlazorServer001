@@ -41,7 +41,7 @@ jobs:
       run: |
          cd DemoVisualStudioCICDForBlazorServer
          ls -al
-         az deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters dockerhubPassword= dockerhubAccount=${{ secrets.DOCKERHUB_TOKEN }}
+         az deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters dockerhubPassword=${{ secrets.DOCKERHUB_PASSWORD }} dockerhubAccount=${{ secrets.DOCKERHUB_USERNAME }}
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
