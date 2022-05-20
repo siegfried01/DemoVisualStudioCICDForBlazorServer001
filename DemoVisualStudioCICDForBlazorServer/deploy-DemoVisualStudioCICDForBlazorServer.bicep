@@ -12,9 +12,12 @@
  * Begin commands to execute this file using Azure CLI with PowerShell
  * $name='DemoVisualStudioCICDForBlazorServer'
  * $rg="rg_$name"
- * #az resource list --resource-group $rg | ConvertFrom-Json | Foreach-Object {az resource delete --resource-group $rg --ids $_.id --verbose}
+ * az resource list --resource-group $rg | ConvertFrom-Json | Foreach-Object {az resource delete --resource-group $rg --ids $_.id --verbose}
  * az deployment group create --mode complete --template-uri data:application/json,%7B%22%24schema%22%3A%22https%3A%2F%2Fschema.management.azure.com%2Fschemas%2F2019-04-01%2FdeploymentTemplate.json%23%22%2C%22contentVersion%22%3A%221.0.0.0%22%2C%22resources%22%3A%5B%5D%7D --name clear-resources --resource-group $rg
  * End commands to execute this file using Azure CLI with Powershell
+ *
+ * ERROR: {'code': 'InvalidTemplate', 'message': "Deployment template validation failed: 'Only 'http' and 'https' schemes are allowed.\r\nParameter name: requestUri'."}
+ * 
  */
 
 param appName  string  = 'demovisualstudiocicdforblazorserver'
