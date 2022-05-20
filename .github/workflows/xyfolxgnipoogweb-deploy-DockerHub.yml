@@ -39,6 +39,8 @@ jobs:
         creds: ${{ secrets.AZURE_CREDENTIALS }}
     - name: Deploy bicep template
       run: |
+         cd DemoVisualStudioCICDForBlazorServer
+         ls -al
          az deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
     - uses: actions/checkout@v2
     - name: Setup .NET Core
