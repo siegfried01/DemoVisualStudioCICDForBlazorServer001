@@ -42,11 +42,12 @@ jobs:
     - name: Deploy with Bicep to Azure
       uses: azure/CLI@v1
       with:
-        context: ./DemoVisualStudioCICDForBlazorServer
         azcliversion: 2.30.0
         inlineScript: |
           az account show
-          az.cmd deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
+          cd DemoVisualStudioCICDForBlazorServer
+          ls -al
+          az deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
     - uses: actions/checkout@v2
     - name: Setup .NET Core
       uses: actions/setup-dotnet@v1
