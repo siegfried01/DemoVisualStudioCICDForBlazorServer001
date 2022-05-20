@@ -19,23 +19,11 @@
 
 param appName  string  = 'demovisualstudiocicdforblazorserver'
 param location string = resourceGroup().location
-param dockerAccount string = 'siegfried01'
-@secure()
+param dockerhubAccount string 
+//@secure()
 param dockerhubPassword string
 param tag string = 'latest'
 
-/*
-resource registry 'Microsoft.ContainerRegistry/registries@2021-12-01-preview' = {
-  name: '${appName}registry'
-  location: location
-  sku: {
-    name: 'Standard'
-  }
-  properties: {
-    adminUserEnabled: true
-  }
-}
-*/
 
 // https://stackoverflow.com/questions/57165359/how-to-deploy-a-private-docker-hub-image-to-an-azure-logic-app-using-the-create
 resource container 'Microsoft.ContainerInstance/containerGroups@2021-10-01' = {
@@ -46,7 +34,7 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2021-10-01' = {
     imageRegistryCredentials:[
       {
         server: 'docker.io'
-        username: dockerAccount
+        username: dockerhubAccount
         password: dockerhubPassword
       }
     ]
@@ -54,7 +42,7 @@ resource container 'Microsoft.ContainerInstance/containerGroups@2021-10-01' = {
       {
         name: 'webfrontend'
         properties: {          
-          image: '${dockerAccount}/${appName}:${tag}'
+          image: '${dockerhubAccount}/${appName}:${tag}'
           //image: '<acr-resource-name>.${imageRegistry}/${appName}:${tag}'
           ports: [
             {
