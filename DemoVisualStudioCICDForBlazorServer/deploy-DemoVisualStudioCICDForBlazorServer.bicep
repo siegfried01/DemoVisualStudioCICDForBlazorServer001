@@ -12,13 +12,9 @@
  * Begin commands to execute this file using Azure CLI with PowerShell
  * $name='DemoVisualStudioCICDForBlazorServer'
  * $rg="rg_$name"
- * echo count=$(az resource list --resource-group $rg | ConvertFrom-Json).Count
- * az resource list --resource-group $rg | ConvertFrom-Json | Foreach-Object {az resource delete --resource-group $rg --ids $_.id --verbose}
- * az deployment group create --mode complete --template-uri data:application/json,%7B%22%24schema%22%3A%22https%3A%2F%2Fschema.management.azure.com%2Fschemas%2F2019-04-01%2FdeploymentTemplate.json%23%22%2C%22contentVersion%22%3A%221.0.0.0%22%2C%22resources%22%3A%5B%5D%7D --name clear-resources --resource-group $rg
+ * az.cmd deployment group create --mode complete --template-file ./clear-resources.json --resource-group $rg
  * End commands to execute this file using Azure CLI with Powershell
  *
- * ERROR: {'code': 'InvalidTemplate', 'message': "Deployment template validation failed: 'Only 'http' and 'https' schemes are allowed.\r\nParameter name: requestUri'."}
- * 
  */
 
 param appName  string  = 'demovisualstudiocicdforblazorserver'
@@ -32,53 +28,6 @@ param tag string = 'latest'
 
 // https://stackoverflow.com/questions/57165359/how-to-deploy-a-private-docker-hub-image-to-an-azure-logic-app-using-the-create
 /*
-resource container 'Microsoft.ContainerInstance/containerGroups@2021-10-01' = {
-  name: '${appName}web'
-  location: location
-  properties: {
-    osType: 'Linux'
-    imageRegistryCredentials:[
-      {
-        server: 'docker.io'
-        username: dockerhubAccount
-        password: dockerhubPassword
-      }
-    ]
-    containers: [
-      {
-        name: 'webfrontend'
-        properties: {          
-          image: '${dockerhubAccount}/${appName}:${tag}'
-          //image: '<acr-resource-name>.${imageRegistry}/${appName}:${tag}'
-          ports: [
-            {
-              port: 80
-              protocol: 'TCP'
-            }
-          ]
-          resources: {
-            requests: {
-              cpu: 1
-              memoryInGB: 2
-            }
-          }
-        }
-      }
-    ]
-    ipAddress: {
-      type: 'Public'
-      dnsNameLabel: appName
-      ports: [
-        {
-          port: 80
-          protocol: 'TCP'
-        }
-      ]
-    }
-  }
-}
-*/
-
 
 @description('Generated from /subscriptions/acc26051-92a5-4ed1-a226-64a187bc27db/resourceGroups/rg_DemoVisualStudioCICDForBlazorServer/providers/Microsoft.ContainerInstance/containerGroups/demovisualstudiocicdforblazorserverweb')
 resource demovisualstudiocicdforblazorserverweb 'Microsoft.ContainerInstance/containerGroups@2021-10-01' = {
@@ -130,6 +79,8 @@ resource demovisualstudiocicdforblazorserverweb 'Microsoft.ContainerInstance/con
   location: location2
 }
 
+*/
+
 // see https://robertchambers.co/2021/09/azure-bicep-webapp/ "linuxFxVersion": "DOCKER|mcr.microsoft.com/appsvc/staticsite:latest",
 // see https://github.com/MicrosoftDocs/azure-docs/issues/36505  "linuxFxVersion": "DOCKER|<myRegistry>.azurecr.io/<myTag>",
 // see https://docs.microsoft.com/en-us/azure/templates/microsoft.web/sites?tabs=bicep Microsoft.Web Sites
@@ -157,6 +108,89 @@ az.cmd webapp create  --name DockerhubDeployDemo004  --resource-group  rg_  --pl
 
 
 */
+
+
+@description('Creates a new site')
+@secure()
+param dockerhubPassword string
+param dockerUsername string = 'siegfried01'
+
+@description('The base name for resources')
+param name string = uniqueString(resourceGroup().id)
+
+@description('The web site hosting plan')
+@allowed([
+  'F1'
+  'D1'
+  'B1'
+  'B2'
+  'B3'
+  'S1'
+  'S2'
+  'S3'
+  'P1'
+  'P2'
+  'P3'
+  'P4'
+])
+param webPlanSku string = 'F1'
+@description('The location for resources')
+param location string = resourceGroup().location
+
+resource plan 'Microsoft.Web/serverfarms@2020-12-01' = {
+  name: '${name}-plan'
+  location: location
+  sku: {
+    name: webPlanSku
+  }
+  kind: 'linux'
+  properties: {
+    reserved: true
+  }
+}
+
+resource web 'Microsoft.Web/sites@2020-12-01' = {
+  name: '${name}-web'
+  location: location
+  properties: {
+    httpsOnly: true // https://stackoverflow.com/questions/54534924/arm-template-for-to-configure-app-services-with-new-vnet-integration-feature/59857601#59857601
+    serverFarmId: plan.id // it should look like /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
+    siteConfig: {
+      linuxFxVersion: 'DOCKER|siegfried01/demovisualstudiocicdforblazorserver:latest'
+    }
+  }
+
+  resource logs 'config' = {
+    name: 'logs'
+    properties: {
+      applicationLogs: {
+        fileSystem: {
+          level: 'Warning'
+        }
+      }
+      httpLogs: {
+        fileSystem: {
+          enabled: true
+        }
+      }
+      detailedErrorMessages: {
+        enabled: true
+      }
+    }
+  }
+}
+var appConfigNew = {
+  DOCKER_ENABLE_CI: 'true'
+  DOCKER_REGISTRY_SERVER_PASSWORD: dockerhubPassword
+  DOCKER_REGISTRY_SERVER_URL: 'https://index.docker.io/v1/'
+  DOCKER_REGISTRY_SERVER_USERNAME: dockerUsername
+}
+
+resource appSettings 'Microsoft.Web/sites/config@2021-01-15' = {
+  name: 'appsettings'
+  parent: web
+  properties: appConfigNew
+}
 
 
 // add Kubernetes Cluster too: https://docs.microsoft.com/en-us/learn/modules/aks-deploy-container-app/7-exercise-expose-app
