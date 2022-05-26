@@ -20,8 +20,7 @@
 param appName  string  = 'demovisualstudiocicdforblazorserver'
 param location string = resourceGroup().location
 param location2 string = 'westus3'
-param dockerUsername string = 'siegfried01'
-@secure()
+param dockerhubAccount string = 'siegfried01'
 param dockerhubPassword string
 param tag string = 'latest'
 
@@ -222,7 +221,7 @@ var appConfigNew = {
   DOCKER_ENABLE_CI: 'true'
   DOCKER_REGISTRY_SERVER_PASSWORD: dockerhubPassword
   DOCKER_REGISTRY_SERVER_URL: 'https://index.docker.io/v1/'
-  DOCKER_REGISTRY_SERVER_USERNAME: dockerUsername
+  DOCKER_REGISTRY_SERVER_USERNAME: dockerhubAccount
 }
 
 resource appSettings 'Microsoft.Web/sites/config@2021-01-15' = {
