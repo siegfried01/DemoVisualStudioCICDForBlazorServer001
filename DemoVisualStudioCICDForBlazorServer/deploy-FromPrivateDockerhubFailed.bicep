@@ -1,189 +1,103 @@
-param sites_DockerDeployDemo003_name string = 'DockerDeployDemo003'
-param serverfarms_Basic_ASP_externalid string = '/subscriptions/acc26051-92a5-4ed1-a226-64a187bc27db/resourceGroups/rg_/providers/Microsoft.Web/serverfarms/Basic-ASP'
+// https://foldr.uk/azure-bicep-app-service-custom-container/
+
+/**
+ * Begin commands to execute this file using Azure CLI with PowerShell
+ * $name='DemoVisualStudioCICDForBlazorServer'
+ * $rg="rg_$name"
+ * $loc='westus2'
+ * az.cmd deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-FromPrivateDockerhubFailed.bicep --parameters '@deploy.parameters.json'
+ * End commands to execute this file using Azure CLI with Powershell
+ */
+
+/**
+ * Begin commands to execute this file using Azure CLI with PowerShell
+ * $name='DemoVisualStudioCICDForBlazorServer'
+ * $rg="rg_$name"
+ * az.cmd deployment group create --mode complete --template-file ./clear-resources.json --resource-group $rg
+ * az deployment group create --mode complete --template-uri data:application/json,%7B%22%24schema%22%3A%22https%3A%2F%2Fschema.management.azure.com%2Fschemas%2F2019-04-01%2FdeploymentTemplate.json%23%22%2C%22contentVersion%22%3A%221.0.0.0%22%2C%22resources%22%3A%5B%5D%7D --name clear-resources --resource-group $rg
+ * End commands to execute this file using Azure CLI with Powershell
+ *
+ * 
+ */
+
 @description('Creates a new site')
 @secure()
-param dockerPassword string
+param dockerhubPassword string
 param dockerUsername string = 'siegfried01'
 
-resource sites_DockerDeployDemo003_name_resource 'Microsoft.Web/sites@2021-03-01' = {
-  name: sites_DockerDeployDemo003_name
-  location: 'West US'
-  kind: 'app,linux,container'
+@description('The base name for resources')
+param name string = uniqueString(resourceGroup().id)
+
+@description('The web site hosting plan')
+@allowed([
+  'F1'
+  'D1'
+  'B1'
+  'B2'
+  'B3'
+  'S1'
+  'S2'
+  'S3'
+  'P1'
+  'P2'
+  'P3'
+  'P4'
+])
+param webPlanSku string = 'F1'
+@description('The location for resources')
+param location string = resourceGroup().location
+
+resource plan 'Microsoft.Web/serverfarms@2020-12-01' = {
+  name: '${name}-plan'
+  location: location
+  sku: {
+    name: webPlanSku
+  }
+  kind: 'linux'
   properties: {
-    enabled: true
-    hostNameSslStates: [
-      {
-        name: 'dockerdeploydemo003.azurewebsites.net'
-        sslState: 'Disabled'
-        hostType: 'Standard'
-      }
-      {
-        name: 'dockerdeploydemo003.scm.azurewebsites.net'
-        sslState: 'Disabled'
-        hostType: 'Repository'
-      }
-    ]
-    serverFarmId: serverfarms_Basic_ASP_externalid
     reserved: true
-    isXenon: false
-    hyperV: false
+  }
+}
+
+resource web 'Microsoft.Web/sites@2020-12-01' = {
+  name: '${name}-web'
+  location: location
+  properties: {
+    httpsOnly: true // https://stackoverflow.com/questions/54534924/arm-template-for-to-configure-app-services-with-new-vnet-integration-feature/59857601#59857601
+    serverFarmId: plan.id // it should look like /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Network/virtualNetworks/{vnetName}/subnets/{subnetName}
     siteConfig: {
-        appSettings: [
-          {
-            name: 'DOCKER_REGISTRY_SERVER_USERNAME'
-            value: dockerUsername
-          }
-          {
-            name: 'DOCKER_REGISTRY_SERVER_PASSWORD'
-            value: dockerPassword
-          }
-          {
-            name: 'DOCKER_REGISTRY_SERVER_URL' 
-            value: 'https://index.docker.io/v1/'
-          }
-        ]      
-      numberOfWorkers: 1
-      linuxFxVersion: 'DOCKER|demovisualstudiocicdforblazorserver'
-      acrUseManagedIdentityCreds: false
-      alwaysOn: false
-      ipSecurityRestrictions: [
-        {
-          ipAddress: 'Any'
-          action: 'Allow'
-          priority: 1
-          name: 'Allow all'
-          description: 'Allow all access'
-        }
-      ]
-      scmIpSecurityRestrictions: [
-        {
-          ipAddress: 'Any'
-          action: 'Allow'
-          priority: 1
-          name: 'Allow all'
-          description: 'Allow all access'
-        }
-      ]
-      http20Enabled: false
-      functionAppScaleLimit: 0
-      minimumElasticInstanceCount: 0
+      linuxFxVersion: 'DOCKER|siegfried01/demovisualstudiocicdforblazorserver:latest'
     }
-    scmSiteAlsoStopped: false
-    clientAffinityEnabled: false
-    clientCertEnabled: false
-    clientCertMode: 'Required'
-    hostNamesDisabled: false
-    customDomainVerificationId: '40BF7B86C2FCFDDFCAF1DB349DF5DEE2661093DBD1F889FA84ED4AAB4DA8B993'
-    containerSize: 0
-    dailyMemoryTimeQuota: 0
-    httpsOnly: false
-    redundancyMode: 'None'
-    storageAccountRequired: false
-    keyVaultReferenceIdentity: 'SystemAssigned'
   }
-}
 
-resource sites_DockerDeployDemo003_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2021-03-01' = {
-  parent: sites_DockerDeployDemo003_name_resource
-  name: 'ftp'
-  location: 'West US'
-  properties: {
-    allow: true
-  }
-}
-
-resource sites_DockerDeployDemo003_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2021-03-01' = {
-  parent: sites_DockerDeployDemo003_name_resource
-  name: 'scm'
-  location: 'West US'
-  properties: {
-    allow: true
-  }
-}
-
-resource sites_DockerDeployDemo003_name_web 'Microsoft.Web/sites/config@2021-03-01' = {
-  parent: sites_DockerDeployDemo003_name_resource
-  name: 'web'
-  location: 'West US'
-  properties: {
-    numberOfWorkers: 1
-    defaultDocuments: [
-      'Default.htm'
-      'Default.html'
-      'Default.asp'
-      'index.htm'
-      'index.html'
-      'iisstart.htm'
-      'default.aspx'
-      'index.php'
-      'hostingstart.html'
-    ]
-    netFrameworkVersion: 'v4.0'
-    linuxFxVersion: 'DOCKER|demovisualstudiocicdforblazorserver'
-    requestTracingEnabled: false
-    remoteDebuggingEnabled: false
-    httpLoggingEnabled: false
-    acrUseManagedIdentityCreds: false
-    logsDirectorySizeLimit: 35
-    detailedErrorLoggingEnabled: false
-    publishingUsername: '$DockerDeployDemo003'
-    scmType: 'None'
-    use32BitWorkerProcess: true
-    webSocketsEnabled: false
-    alwaysOn: false
-    managedPipelineMode: 'Integrated'
-    virtualApplications: [
-      {
-        virtualPath: '/'
-        physicalPath: 'site\\wwwroot'
-        preloadEnabled: false
+  resource logs 'config' = {
+    name: 'logs'
+    properties: {
+      applicationLogs: {
+        fileSystem: {
+          level: 'Warning'
+        }
       }
-    ]
-    loadBalancing: 'LeastRequests'
-    experiments: {
-      rampUpRules: []
+      httpLogs: {
+        fileSystem: {
+          enabled: true
+        }
+      }
+      detailedErrorMessages: {
+        enabled: true
+      }
     }
-    autoHealEnabled: false
-    vnetRouteAllEnabled: false
-    vnetPrivatePortsCount: 0
-    localMySqlEnabled: false
-    ipSecurityRestrictions: [
-      {
-        ipAddress: 'Any'
-        action: 'Allow'
-        priority: 1
-        name: 'Allow all'
-        description: 'Allow all access'
-      }
-    ]
-    scmIpSecurityRestrictions: [
-      {
-        ipAddress: 'Any'
-        action: 'Allow'
-        priority: 1
-        name: 'Allow all'
-        description: 'Allow all access'
-      }
-    ]
-    scmIpSecurityRestrictionsUseMain: false
-    http20Enabled: false
-    minTlsVersion: '1.2'
-    scmMinTlsVersion: '1.2'
-    ftpsState: 'AllAllowed'
-    preWarmedInstanceCount: 0
-    functionAppScaleLimit: 0
-    functionsRuntimeScaleMonitoringEnabled: false
-    minimumElasticInstanceCount: 0
-    azureStorageAccounts: {}
   }
 }
+var appConfigNew = {
+  DOCKER_ENABLE_CI: 'true'
+  DOCKER_REGISTRY_SERVER_PASSWORD: dockerhubPassword
+  DOCKER_REGISTRY_SERVER_URL: 'https://index.docker.io/v1/'
+  DOCKER_REGISTRY_SERVER_USERNAME: dockerUsername
+}
 
-resource sites_DockerDeployDemo003_name_sites_DockerDeployDemo003_name_azurewebsites_net 'Microsoft.Web/sites/hostNameBindings@2021-03-01' = {
-  parent: sites_DockerDeployDemo003_name_resource
-  name: '${sites_DockerDeployDemo003_name}.azurewebsites.net'
-  location: 'West US'
-  properties: {
-    siteName: 'DockerDeployDemo003'
-    hostNameType: 'Verified'
-  }
+resource appSettings 'Microsoft.Web/sites/config@2021-01-15' = {
+  name: 'appsettings'
+  parent: web
+  properties: appConfigNew
 }
