@@ -1,11 +1,48 @@
 
 /**
- * Begin commands to execute this file using Azure CLI with PowerShell
- * $name='DemoVisualStudioCICDForBlazorServer'
- * $rg="rg_$name"
- * $loc='westus2'
- * az.cmd deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
- * End commands to execute this file using Azure CLI with Powershell
+   Begin common prolog commands
+   export name=DemoVisualStudioCICDForBlazorServer
+   export registry=`perl -e '$_ = shift; print lc;' $name`
+   export image=image`perl -e '$_ = shift; print lc;' $name`
+   export plan=plan_`perl -e '$_ = shift; print lc;' $name`
+   export rg=rg_${name}
+   export web=web3${name}
+   export loc=westus
+   End common prolog commands
+
+   emacs F10
+   Begin commands to execute this file using Azure CLI with bash
+   echo WaitForBuildComplete
+   WaitForBuildComplete
+   echo "Previous build is complete. Begin deployment build."
+   az deployment group create --name DemoVisualStudioCICDForBlazorServer --resource-group rg_DemoVisualStudioCICDForBlazorServer   --template-file deploy-DemoVisualStudioCICDForBlazorServer.bicep --parameters '@deploy.parameters.json'
+   End commands to execute this file using Azure CLI with bash
+
+   emacs ESC 2 F10
+   Begin commands to shut down this deployment using Azure CLI with bash
+   echo CreateBuildEvent.exe
+   CreateBuildEvent.exe&
+   echo "begin shutdown"
+   az deployment group create --mode complete --template-file ./clear-resources.json --resource-group $rg
+   BuildIsComplete.exe
+   az resource list --query "[?resourceGroup=='$rg'].{ name: name, flavor: kind, resourceType: type, region: location }" --output table
+   echo "showdown is complete"
+   End commands to shut down this deployment using Azure CLI with bash
+
+   emacs ESC 3 F10
+   Begin commands for one time initializations using Azure CLI with bash
+   az group create -l $loc -n $rg
+   export id=`az group show --name $rg --query 'id' --output tsv`
+   cat >clear-resources.json <<EOF
+   {
+    "\$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
+     "contentVersion": "1.0.0.0",
+     "resources": [] 
+   }
+   EOF
+   End commands for one time initializations using Azure CLI with bash
+
+
  */
 
 /**

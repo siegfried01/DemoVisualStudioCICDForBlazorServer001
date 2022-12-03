@@ -1,13 +1,13 @@
 param sites_web3DemoVisualStudioCICDForBlazorServer_name string
 param serverfarms_plan_demovisualstudiocicdforblazorserver_name string
 param registries_demovisualstudiocicdforblazorserver_name string
+param loc string = resourceGroup().location
 
 resource registries_demovisualstudiocicdforblazorserver_name_resource 'Microsoft.ContainerRegistry/registries@2022-02-01-preview' = {
   name: registries_demovisualstudiocicdforblazorserver_name
-  location: 'westus2'
+  location: loc
   sku: {
     name: 'Basic'
-    tier: 'Basic'
   }
   properties: {
     adminUserEnabled: true
@@ -47,7 +47,7 @@ resource registries_demovisualstudiocicdforblazorserver_name_resource 'Microsoft
 
 resource serverfarms_plan_demovisualstudiocicdforblazorserver_name_resource 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: serverfarms_plan_demovisualstudiocicdforblazorserver_name
-  location: 'West US 2'
+  location: loc
   sku: {
     name: 'B1'
     tier: 'Basic'
@@ -73,7 +73,7 @@ resource serverfarms_plan_demovisualstudiocicdforblazorserver_name_resource 'Mic
 
 resource sites_web3DemoVisualStudioCICDForBlazorServer_name_resource 'Microsoft.Web/sites@2022-03-01' = {
   name: sites_web3DemoVisualStudioCICDForBlazorServer_name
-  location: 'West US 2'
+  location: loc
   kind: 'app,linux,container'
   properties: {
     enabled: true
@@ -123,7 +123,6 @@ resource sites_web3DemoVisualStudioCICDForBlazorServer_name_resource 'Microsoft.
 resource sites_web3DemoVisualStudioCICDForBlazorServer_name_ftp 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-03-01' = {
   parent: sites_web3DemoVisualStudioCICDForBlazorServer_name_resource
   name: 'ftp'
-  location: 'West US 2'
   properties: {
     allow: true
   }
@@ -132,7 +131,6 @@ resource sites_web3DemoVisualStudioCICDForBlazorServer_name_ftp 'Microsoft.Web/s
 resource sites_web3DemoVisualStudioCICDForBlazorServer_name_scm 'Microsoft.Web/sites/basicPublishingCredentialsPolicies@2022-03-01' = {
   parent: sites_web3DemoVisualStudioCICDForBlazorServer_name_resource
   name: 'scm'
-  location: 'West US 2'
   properties: {
     allow: true
   }
@@ -141,7 +139,7 @@ resource sites_web3DemoVisualStudioCICDForBlazorServer_name_scm 'Microsoft.Web/s
 resource sites_web3DemoVisualStudioCICDForBlazorServer_name_web 'Microsoft.Web/sites/config@2022-03-01' = {
   parent: sites_web3DemoVisualStudioCICDForBlazorServer_name_resource
   name: 'web'
-  location: 'West US 2'
+
   properties: {
     numberOfWorkers: 1
     defaultDocuments: [
@@ -219,7 +217,6 @@ resource sites_web3DemoVisualStudioCICDForBlazorServer_name_web 'Microsoft.Web/s
 resource sites_web3DemoVisualStudioCICDForBlazorServer_name_sites_web3DemoVisualStudioCICDForBlazorServer_name_azurewebsites_net 'Microsoft.Web/sites/hostNameBindings@2022-03-01' = {
   parent: sites_web3DemoVisualStudioCICDForBlazorServer_name_resource
   name: '${sites_web3DemoVisualStudioCICDForBlazorServer_name}.azurewebsites.net'
-  location: 'West US 2'
   properties: {
     siteName: 'web3DemoVisualStudioCICDForBlazorServer'
     hostNameType: 'Verified'

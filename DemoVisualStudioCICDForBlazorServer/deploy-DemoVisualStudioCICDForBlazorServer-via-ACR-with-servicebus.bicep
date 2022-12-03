@@ -73,14 +73,14 @@
    
    emacs ESC 6 F10
    Begin commands to deploy this file using Azure CLI with bash
-   password=`az acr credential show --resource-group $rg --name demovisualstudiocicdforblazorserver --query passwords[0].value --output tsv`
+   password=`az acr credential show --resource-group $rg --name $registry --query passwords[0].value --output tsv`
    echo password=$password
-   username=`az acr credential show --resource-group $rg --name demovisualstudiocicdforblazorserver --query username  --output tsv`
+   username=`az acr credential show --resource-group $rg --name $registry --query username  --output tsv`
    echo username=$username
    echo az appservice plan create --name $plan --is-linux  --resource-group $rg  --sku B1
    az appservice plan create --name $plan --is-linux  --resource-group $rg  --sku B1
-   echo az webapp create  --name $web --resource-group  $rg  --plan $plan --deployment-container-image-name demovisualstudiocicdforblazorserver.azurecr.io/$repo/$image:v1 
-   az webapp create  --name $web --resource-group  $rg  --plan $plan --deployment-container-image-name demovisualstudiocicdforblazorserver.azurecr.io/$repo/$image:v1 -s $username -w $password
+   echo az webapp create  --name $web --resource-group  $rg  --plan $plan --deployment-container-image-name $registry.azurecr.io/$repo/$image:v1 
+   az webapp create  --name $web --resource-group  $rg  --plan $plan --deployment-container-image-name $registry.azurecr.io/$repo/$image:v1 -s $username -w $password
    az resource list -g $rg --query "[?resourceGroup=='$rg'].{ name: name, flavor: kind, resourceType: type, region: location }" --output table
    End commands to deploy this file using Azure CLI with bash
 
