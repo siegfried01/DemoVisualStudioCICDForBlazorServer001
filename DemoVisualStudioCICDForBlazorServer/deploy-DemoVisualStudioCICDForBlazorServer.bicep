@@ -33,6 +33,11 @@
    Begin commands for one time initializations using Azure CLI with bash
    az group create -l $loc -n $rg
    export id=`az group show --name $rg --query 'id' --output tsv`
+   echo "id=$id"
+   export sp="spad_$name"
+   az ad sp create-for-rbac --name $sp --sdk-auth --role contributor --scopes $id
+   echo "go to github settings->secrets and create a secret called AZURE_CREDENTIALS with the above output"
+   export id=`az group show --name $rg --query 'id' --output tsv`
    cat >clear-resources.json <<EOF
    {
     "\$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",

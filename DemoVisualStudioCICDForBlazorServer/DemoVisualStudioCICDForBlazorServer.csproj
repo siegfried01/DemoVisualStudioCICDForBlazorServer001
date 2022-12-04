@@ -10,8 +10,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="EmbeddedBlazorContent" Version="1.10.0" />
-    <PackageReference Include="MatBlazor" Version="2.8.0" />
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.14.0" />
   </ItemGroup>
 

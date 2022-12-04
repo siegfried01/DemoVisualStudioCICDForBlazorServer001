@@ -15,7 +15,7 @@
    export rg=rg_$name
    export web=web3$name
    export repo=sample
-   export loc=westus2
+   export loc=westus
    export busNS=sbdemo001NS
    export queue=mainqueue001
    End common prolog commands
@@ -64,15 +64,7 @@
    Begin commands to deploy this file using Azure CLI with bash
    echo az acr build -g $rg --image $repo/$image:v1 --registry $registry --file Dockerfile . 
    az acr build -g $rg --image $repo/$image:v1 --registry $registry --file Dockerfile .
-   End commands to deploy this file using Azure CLI with bash
-    
-   emacs ESC 5 F10
-   Begin commands to deploy this file using Azure CLI with bash
    az acr repository list -n $registry
-   End commands to deploy this file using Azure CLI with bash
-   
-   emacs ESC 6 F10
-   Begin commands to deploy this file using Azure CLI with bash
    password=`az acr credential show --resource-group $rg --name $registry --query passwords[0].value --output tsv`
    echo password=$password
    username=`az acr credential show --resource-group $rg --name $registry --query username  --output tsv`
@@ -84,7 +76,7 @@
    az resource list -g $rg --query "[?resourceGroup=='$rg'].{ name: name, flavor: kind, resourceType: type, region: location }" --output table
    End commands to deploy this file using Azure CLI with bash
 
-   emacs ESC 7 F10
+   emacs ESC 5 F10
    Begin commands to deploy this file using Azure CLI with bash
    echo az servicebus namespace create --resource-group $rg --name $busNS --location $loc
    az servicebus namespace create --resource-group $rg --name $busNS --location $loc
@@ -93,7 +85,7 @@
    echo az servicebus namespace authorization-rule keys list --resource-group $rg --namespace-name $busNS --name RootManageSharedAccessKey --query primaryConnectionString --output tsv
    End commands to deploy this file using Azure CLI with bash
 
-   emacs ESC 8 F10
+   emacs ESC 6 F10
    Begin commands to deploy this file using Azure CLI with bash
    export sbconn=`az servicebus namespace authorization-rule keys list --resource-group $rg --namespace-name $busNS --name RootManageSharedAccessKey --query primaryConnectionString --output tsv`
    dotnet script servicebusinsertmsg.csx $busNS $queue

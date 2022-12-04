@@ -1,17 +1,13 @@
 ﻿@page "/"
 @using static System.Console
-@using MatBlazor
 @using Microsoft.Extensions.Logging;
 @inject ILogger<Index> logger
-@inject IJSRuntime JsRuntime
 
 <PageTitle>Index</PageTitle>
 
 <h1>Hello, world! @DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)")</h1>
-<MatButton>Hello Mat Design</MatButton>
 
 Welcome to your new app deployed from Github Workflow Actions. Now deploying via DockerHub!
-<button @onclick="ShowConfirm">Demo Javascript</button>
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 <button @onclick="makeStdOutLogEntry">
@@ -26,43 +22,14 @@ Welcome to your new app deployed from Github Workflow Actions. Now deploying via
     { // https://www.c-sharpcorner.com/article/introduction-to-logging-framework-in-blazor-with-net-core/
         count++;
         var now = DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)");
-        Console.WriteLine("Button press " + now);
-        logger.LogDebug("Debug Logger: Button press " + now);
-        logger.LogInformation("Info Logger: Button press " + now);
-        logger.LogTrace("Trace Logger: Button press " + now);
-        logger.LogWarning("Warning Logger: Button press " + now);
+        Console.WriteLine("System.Console.WriteLine Button press " + now);
+        System.Diagnostics.Trace.WriteLine($"System.Diagnostics.Trace.WriteLine: {now}");
+        logger.LogDebug("logger.LogDebu Button press " + now);
+        logger.LogInformation("logger.LogInformation: Button press " + now);
+        logger.LogTrace("logger.LogTrace: Button press " + now);
+        logger.LogWarning("logger.LogWarningr: Button press " + now);
+        System.Diagnostics.Trace.TraceInformation($"System.Diagnostics.Trace.TraceInformation: {now}");
+        System.Diagnostics.Trace.TraceWarning($"System.Diagnostics.Trace.TraceWarning: {now}");
+        System.Diagnostics.Trace.TraceError($"System.Diagnostics.Trace.TraceError: {now}");
     }
-
-
-    private async Task ShowConfirm()
-    {
-        var messageParams = new
-        {
-            title = "Are you sure?",
-            text = $"Do you want to remove the pizza from your order?",
-            icon = "warning",
-            buttons = new
-            {
-                abort = new
-                {
-                    text = "Leave it in my order",
-                    value = false
-                },
-                confirm = new
-                {
-                    text = "Remove pizza",
-                    value = true
-                }
-            },
-            dangerMode = true
-        };
-
-        if (await JsRuntime.InvokeAsync<bool>("swal", messageParams))
-        {
-            var now = DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)");
-            logger.LogDebug("Debug Logger: Button press " + now);
-        }
-    }
-
-
 }
