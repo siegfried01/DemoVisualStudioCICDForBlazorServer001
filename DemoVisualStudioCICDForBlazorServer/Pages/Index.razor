@@ -7,7 +7,7 @@
 
 <h1>Hello, world! @DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)")</h1>
 
-Welcome to your new app deployed from Github Workflow Actions. Now deploying via DockerHub!
+Welcome to your new app deployed from Github Workflow Actions. title=@title
 
 <SurveyPrompt Title="How is Blazor working for you?" />
 <button @onclick="makeStdOutLogEntry">
@@ -17,12 +17,13 @@ Welcome to your new app deployed from Github Workflow Actions. Now deploying via
     count = @count
 </div>
 @code {
+    string title = System.Environment.GetEnvironmentVariable("TITLE") ?? "default title=Now deploying via DockerHub!";
     int count = 0;
-    async Task makeStdOutLogEntry()
+    void makeStdOutLogEntry()
     { // https://www.c-sharpcorner.com/article/introduction-to-logging-framework-in-blazor-with-net-core/
         count++;
         var now = DateTime.Now.ToString("ddddd MMMM dd yyyy hh:mm:ss.ffff tt (zzz)");
-        Console.WriteLine("System.Console.WriteLine Button press " + now);
+        System.Console.WriteLine("System.Console.WriteLine Button press " + now);
         System.Diagnostics.Trace.WriteLine($"System.Diagnostics.Trace.WriteLine: {now}");
         logger.LogDebug("logger.LogDebu Button press " + now);
         logger.LogInformation("logger.LogInformation: Button press " + now);

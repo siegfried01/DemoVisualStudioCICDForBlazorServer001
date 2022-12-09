@@ -264,6 +264,7 @@ var appConfigNew = {
   DOCKER_REGISTRY_SERVER_PASSWORD: dockerhubPassword
   DOCKER_REGISTRY_SERVER_URL: 'https://index.docker.io/v1/'
   DOCKER_REGISTRY_SERVER_USERNAME: dockerhubAccount
+  TITLE: 'deployed via githb workflow, bicep & dockerhub'
 }
 
 resource appSettings 'Microsoft.Web/sites/config@2021-01-15' = {
