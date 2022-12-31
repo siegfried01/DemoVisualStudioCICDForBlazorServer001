@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using DemoVisualStudioCICDForBlazorServer.Data;
+using System;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,10 @@ builder.Services.AddRazorPages();
 builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 var appinsconn = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
-builder.Services.AddApplicationInsightsTelemetry(appinsconn);
+if (string.IsNullOrEmpty(appinsconn))
+    Console.WriteLine("Missing Connection string APPLICATIONINSIGHTS_CONNECTION_STRING");
+else
+    builder.Services.AddApplicationInsightsTelemetry(appinsconn);
 //builder.Services.AddLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug));
 //builder.Logging.ClearProviders().AddConsole();
 
