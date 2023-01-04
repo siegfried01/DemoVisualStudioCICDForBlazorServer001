@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Components;
 using Microsoft.AspNetCore.Components.Web;
 using DemoVisualStudioCICDForBlazorServer.Data;
 using System;
+using static System.Console;
+using System.Text.RegularExpressions;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,9 +13,22 @@ builder.Services.AddServerSideBlazor();
 builder.Services.AddSingleton<WeatherForecastService>();
 var appinsconn = builder.Configuration["APPLICATIONINSIGHTS_CONNECTION_STRING"];
 if (string.IsNullOrEmpty(appinsconn))
-    Console.WriteLine("Missing Connection string APPLICATIONINSIGHTS_CONNECTION_STRING");
+{
+    WriteLine("Missing Connection string APPLICATIONINSIGHTS_CONNECTION_STRING");
+}
 else
+{
+    var m = new Regex("^(InstrumentationKey=)([^;]+)(.*)$").Match(appinsconn);
+    if (m.Success)
+    {
+        WriteLine($"found connection string={m.Groups[1]}xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx{m.Groups[3]}");
+    }
+    else
+    {
+        WriteLine($"found connection string");
+    }
     builder.Services.AddApplicationInsightsTelemetry(appinsconn);
+}
 //builder.Services.AddLogging(builder => builder.AddConsole().SetMinimumLevel(LogLevel.Debug));
 //builder.Logging.ClearProviders().AddConsole();
 
